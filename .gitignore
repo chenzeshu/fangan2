@@ -1,0 +1,20 @@
+/vendor
+/node_modules
+/public/storage
+/uploads
+/ueditor
+/images
+Homestead.yaml
+Homestead.json
+.env
+/resources/org/
+
+
+2016年销售产品线0808 - 副本.xlsx
+2016年销售产品线0808 小副本 - 副本.xls
+
+参考_excel.xls
+参考_word.docx
+数据库.xlsx
+销售小表1115.xls
+WORK_RESULT_EXCEL.php

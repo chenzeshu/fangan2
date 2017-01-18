@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+            <td id="img-name">
+				目前已经顺利转移代码并成功
+            </td>
+</body>
+<script src="/resources/views/admin/style/js/jquery.js"></script>
+<script>
+    //添加
+    $('#img-name').append('<input type="text" name="pros_img_other_name" class="md">')
+    //删除
+    var index = $('#img-name').children('input').length //children是一个数组
+    $('input[name="pros_img_other_name[]"]').eq(index).remove()  //删去了最新的一个
+    //忘了哪个需要AJAX，但先写了
+    var names = $('input[name="pros_img_other_name[]"]').map(function () {
+        return $(this).val()
+    }).get().join(',')
+    //然后传names即可
+</script>
+</html>
