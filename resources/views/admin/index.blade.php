@@ -46,6 +46,8 @@
 					<li><a href="{{url('admin/pros')}}" target="main"><i class="fa fa-fw fa-plus-square"></i>数据列表</a></li>
 					<li><a href="{{url('admin/pros/create')}}" target="main"><i class="fa fa-fw fa-plus-square"></i>添加产品</a></li>
 					<li><a href="{{url('admin/params')}}" target="main"><i class="fa fa-fw fa-plus-square"></i>汇率比例</a></li>
+					<li><a href="{{url('admin/systemList')}}" target="main"><i class="fa fa-fw fa-plus-square"></i>系统(数据库)</a></li>
+					<li><a href="{{url('admin/system')}}" target="main"><i class="fa fa-fw fa-plus-square"></i>系统(清单)</a></li>
 				</ul>
 			</li>
 			@endrole

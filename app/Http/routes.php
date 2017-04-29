@@ -13,8 +13,8 @@ Route::group(['middleware' => ['web']], function () {\
     Route::any('admin/auth', 'Entrust\EntrustController@index');
     //后台登陆
     Route::any('/', 'Admin\loginController@login');
-    Route::any('admin/login', 'Admin\loginController@login');
-    Route::get('admin/code', 'Admin\loginController@code');
+    Route::any('admin/login', 'Admin\LoginController@login');
+    Route::get('admin/code', 'Admin\LoginController@code');
     Route::get('admin/logout', 'Admin\loginController@logout');
     //Word 导出
     Route::get('word/wordexport','WordController@export');  //例子
@@ -74,7 +74,10 @@ Route::group(['middleware'=>['web','admin.login'],'prefix'=>'admin','namespace' 
     Route::any('fangan/renumber','FanganController@reNumber'); //小表 改数字 AJAX
     Route::any('fangan/searchPros','FanganController@searchPros'); //小表 改数字 AJAX
 
-
+    //系统（数据库）列表
+    Route::resource('system','SystemController');
+    //系统（清单）列表
+    Route::resource('systemList','SystemListController');
 });
 
 Route::group(['middleware'=>['web','admin.login'],'namespace' => 'Entrust'], function () {

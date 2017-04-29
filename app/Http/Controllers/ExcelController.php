@@ -32,27 +32,28 @@ class ExcelController extends Controller
                 $sheet->setWidth(array(
                     'A'     =>  7,
                     'B'     =>  19,
-                    'C'     =>  19,
+                    'C'     =>  27,
                     'D'     =>  25,
-                    'E'     =>  35,
-                    'F'     =>  7,
-                    'G'     =>  5,
-                    'H'     =>  9,
-                    'I'     =>  12,
-                    'J'     =>  10,
-                    'K'     =>  9,
-                    'L'     =>  12,
-                    'M'     =>  15,
+                    'E'     =>  25,
+                    'F'     =>  35,
+                    'G'     =>  7,
+                    'H'     =>  5,
+                    'I'     =>  9,
+                    'J'     =>  12,
+                    'K'     =>  10,
+                    'L'     =>  9,
+                    'M'     =>  12,
                     'N'     =>  15,
-                    'O'     =>  32,
+                    'O'     =>  15,
+                    'P'     =>  32
                 ));
 
-                $sheet->row(1, ['序号','设备名称','品牌','规格型号','简单参数描述',
-                    '数量','单位','产地','体积(l*w*h,mm)','机柜尺寸(U)','重量(kg)','功耗(W)','成本单价(元)','出厂单价(元)','备注',]);
+                $sheet->row(1, ['序号','物资编码','设备名称','产地', '品牌','规格型号','简单参数描述',
+                    '数量','单位','体积(l*w*h,mm)','机柜尺寸(U)','重量(kg)','功耗(W)','成本单价(元)','出厂单价(元)','备注']);
                 //todo 标题栏的格式
                 $sheet->getStyle('J1')->getAlignment()->setWrapText(true);
                 $sheet->getStyle('I1')->getAlignment()->setWrapText(true);
-                $sheet->cells('A1:O1', function($cells) {
+                $sheet->cells('A1:P1', function($cells) {
                     $cells->setFont(array(
                         'family'     => '宋体',
                         'size'       => '11',
@@ -77,7 +78,7 @@ class ExcelController extends Controller
                         foreach ($pros as $v) {
                             if ($v->father == $k->sys) {
                                 $sheet->appendRow([
-                                    $id, $v->name, $v->brand, $v->detail, $v->less,$v->number, $v->unit, $v->area,
+                                    $id,$v->goodsid, $v->name, $v->area, $v->brand, $v->detail, $v->less,$v->number, $v->unit,
                                     $v->vol,$v->u,$v->kg, $v->w, $v->display_inprice, $v->display_outprice, $v->remark
                                 ]);
                                 //todo 使用PHPExcel本地方法来达到warptext
@@ -90,13 +91,13 @@ class ExcelController extends Controller
                     }
                 }
                 //todo 表格整体样式调整
-                $sheet->cells('A1:O'.$count, function($cells) {
+                $sheet->cells('A1:P'.$count, function($cells) {
                     $cells->setAlignment('center');            //水平居中
                     $cells->setValignment('center');           //垂直居中
                 });
                 //todo 设置边框, >>必须放到最后<<，不然最先生成有边框的空白cells
                 $count = $count-1;
-                $sheet->setBorder('A1:O'.$count);
+                $sheet->setBorder('A1:P'.$count);
 
 
             });

@@ -34,14 +34,15 @@
                 <table class="list_tab" id="table">
                     <tr>
                         <th class="tc">ID</th>
+                        <th>物资编码</th>
                         <th>名称</th>
+                        <th>产地</th>
                         <th>品牌</th>
                         <th>设备型号</th>
                         {{--大图、详细描述--}}
                         <th>图文弹框</th>
                         <th>数量</th>
                         <th>单位</th>
-                        <th>产地</th>
                         {{--参数表：体积、机柜尺寸、重量、功耗、--}}
                         <th>参数表</th>
                         <th>成本单价（元）</th>
@@ -54,7 +55,7 @@
                     @foreach($data as $m)
                         @if($m->father==0)
                         <tr id="{{$m->id}}">
-                            <td class="tc" colspan="12"><b>{{$m->name}}</b></td>
+                            <td class="tc" colspan="13"><b>{{$m->name}}</b></td>
                             <td>
                                 <a href="{{url('admin/fangan/edit')."/$m->sys"}}">添加</a>
                                 <a href="javascript:"onclick="deleteObj({{$m->id}})">删除</a>
@@ -64,6 +65,9 @@
                             @if($v->father == $m->son)
                         <tr id="{{$v->id}}">
                             <td class="tc">{{$a=$a+1}}</td>
+                            <td>
+                                <a href="#">{{$v->goodsid}}</a>
+                            </td>
                             <td>
                                 <a href="#">{{$v->name}}</a>
                             </td>

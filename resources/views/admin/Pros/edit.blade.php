@@ -44,28 +44,11 @@
                     <th>分系统：</th>
                     <td>
                         <select name="pros_sys" id="" class="self-border">
-                            <option value="1" @if($field->pros_sys ==1 ) selected @endif>系统</option>
-                            <option value='卫星通信天线' @if($field->pros_sys =='卫星通信天线' ) selected @endif>一、卫星通信天线</option>
-                            <option value='卫星功放' @if($field->pros_sys =='卫星功放' ) selected @endif>二、卫星功放</option>
-                            <option value='卫星LNB' @if($field->pros_sys =='卫星LNB' ) selected @endif>三、卫星LNB</option>
-                            <option value='卫星通信机设备' @if($field->pros_sys =='卫星通信机设备' ) selected @endif>四、卫星通信机设备</option>
-                            <option value='卫星通信的辅助设备和器材' @if($field->pros_sys =='卫星通信的辅助设备和器材' ) selected @endif>五、卫星通信的辅助设备和器材</option>
-                            <option value='软件' @if($field->pros_sys =='软件' ) selected @endif>六、软件</option>
-                            <option value='北斗设备' @if($field->pros_sys =='北斗设备' ) selected @endif>七、北斗设备</option>
-                            <option value='TD-LTE专网设备' @if($field->pros_sys =='TD-LTE专网设备' ) selected @endif>八、TD-LTE专网设备</option>
-                            <option value='卫星电话' @if($field->pros_sys =='卫星电话' ) selected @endif>九、卫星电话</option>
-                            <option value='对讲设备' @if($field->pros_sys =='对讲设备' ) selected @endif>十、对讲设备</option>
-                            <option value='短波设备' @if($field->pros_sys =='短波设备' ) selected @endif>十一、短波设备</option>
-                            <option value='VOIP语音网关' @if($field->pros_sys =='VOIP语音网关' ) selected @endif>十二、VOIP语音网关</option>
-                            <option value='语音调度及周边设备' @if($field->pros_sys =='语音调度及周边设备' ) selected @endif>十三、语音调度及周边设备</option>
-                            <option value='计算机及网络设备' @if($field->pros_sys == '计算机及网络设备') selected @endif>十四、计算机及网络设备</option>
-                            <option value='视讯会议和编解码器' @if($field->pros_sys =='视讯会议和编解码器' ) selected @endif>十五、视讯会议和编解码器</option>
-                            <option value='图传设备' @if($field->pros_sys =='图传设备' ) selected @endif>十六、图传设备</option>
-                            <option value='视音频输入输出设备' @if($field->pros_sys =='视音频输入输出设备' ) selected @endif>十七、视音频输入输出设备</option>
-                            <option value='电源设备' @if($field->pros_sys =='电源设备' ) selected @endif>十八、电源设备</option>
-                            <option value='辅助设备' @if($field->pros_sys == '辅助设备') selected @endif>十九、辅助设备</option>
-                            <option value='载车' @if($field->pros_sys == '载车') selected @endif>二十、载车</option>
-                            <option value='信道、服务费用' @if($field->pros_sys == '信道、服务费用') selected @endif>二十一、信道、服务费用</option>
+                            @if(isset($systemList))
+                                @foreach($systemList as $k=>$v)
+                                <option value='{{$v->name}}' @if($field->pros_sys == $v->name ) selected @endif>{{($k+1)."--".$v->name}}</option>
+                                @endforeach
+                            @endif
                         </select>
                     </td>
                 </tr>
@@ -73,6 +56,12 @@
                     <th>设备名称：</th>
                     <td>
                         <input type="text" class="md" name="pros_name" value="{{$field->pros_name}}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>物资编码：</th>
+                    <td>
+                        <input type="text" class="md" name="pros_goodsid" value="{{$field->pros_goodsid}}" placeholder="填写物资编码">
                     </td>
                 </tr>
                 <tr>
@@ -283,6 +272,7 @@
         function tijiao(pros_id) {
             var sys = $('.self-border>option:selected').val()
             var name = $('[name=pros_name]').val()
+            var goodsid = $('[name=pros_goodsid]').val()
             var brand =  $('[name=pros_brand]').val()
             var detail =  $('[name=pros_detail]').val()
             var less =  $('[name=pros_less]').val()
@@ -312,6 +302,7 @@
             $.post("{{url('admin/pros/')}}/"+pros_id,{
                 'pros_sys' : sys,
                 'pros_name' : name,
+                'pros_goodsid' : goodsid,
                 'pros_brand' : brand,
                 'pros_detail' : detail,
                 'pros_less' : less,

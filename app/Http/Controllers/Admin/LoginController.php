@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 
-require_once "resources/org/code/Code.class.php";
+require_once "/resources/org/code/Code.class.php";
 
 class LoginController extends CommonController
 {
@@ -39,13 +39,13 @@ class LoginController extends CommonController
         }
         return view('admin/login');
 
-     }
+    }
 
     public function code()
     {
-          $code = new \Code;
-          echo $code->make();
-     }
+        $code = new \Code();
+        echo $code->make();
+    }
 
     public function logout()
     {
@@ -122,8 +122,8 @@ class LoginController extends CommonController
     }
 
     public function test(){
-    	Input::except('_token');
-    	$name = $_FILES;
-    	dd($name);
+        Input::except('_token');
+        $name = $_FILES;
+        dd($name);
     }
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Model\Params;
 use App\Model\Pros;
+use App\Model\System;
+use App\Model\SystemList;
+use App\Repositories\ProsRepositories;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -13,16 +16,28 @@ use Illuminate\Support\Facades\Validator;
 
 class ProsController extends Controller
 {
+    /**
+     * pros的系统为关联键为"name"，同时，没有做ORM，纯手工关联。
+     */
+    protected $repo;
+
+    public function __construct(ProsRepositories $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function index(){
         $data = Pros::orderBy('pros_id','asc')->paginate(10);
+        $systemList = SystemList::all();
         $links = $data->links();
-        return view('admin/pros/index',compact('data'));
+        return view('admin/pros/index',compact('data', 'systemList'));
     }
 
     //get  admin/reward/create  添加商品
     public function create()
     {
-        return view('admin.pros.create');
+        $systemList = SystemList::all();
+        return view('admin.pros.create',compact('systemList'));
     }
 
     public function store()
@@ -43,31 +58,21 @@ class ProsController extends Controller
 
             //todo 按币种转换成本为人民币
             $params = Params::first();
-            $dollar =$params['pa_dollar'];
+            $dollar = $params['pa_dollar'];
             $eu = $params['pa_eu'];
-            $bili =$params['pa_bili'];
+            $bili = $params['pa_bili'];
 
-            if ($input['pros_flag_money'] == 1 ){
-                //系数1 美元
-                $input['pros_display_inprice'] = $input['pros_inprice']*$dollar ;
-            }elseif($input['pros_flag_money'] == 2 ){
-                //系数2 欧元
-                $input['pros_display_inprice'] = $input['pros_inprice']*$eu ;
-            }else{
-                //系数3 人民币
-                $input['pros_display_inprice'] = $input['pros_inprice'];
-            }
+            //todo 返回各种币种换算后的人民币价格
+            $input['pros_display_inprice'] = $this->repo
+                ->judgeInprice($input['pros_flag_money'], $input['pros_inprice'], $dollar, $eu);
+
             //todo 是否转换为有比例报价
-            if ($input['pros_flag_bili']==1){
-                //系数1 无比例
-                $input['pros_display_outprice'] = $input['pros_outprice'];
-            }else{
-                //系数2 有比例
-                $input['pros_display_outprice'] = $input['pros_display_inprice']*$bili;
-            }
+            $input['pros_display_outprice'] = $this->repo
+                ->judgeOutprice($input['pros_flag_bili'], $input['pros_outprice'],$input['pros_display_inprice'], $bili);
 
-
+            //todo 存储
             $re = Pros::create($input);
+
             if($re){
                 return redirect('admin/pros');
             }else{
@@ -81,9 +86,10 @@ class ProsController extends Controller
     //get  admin/reward/{reward}/edit  编辑分类 {reward}是传参的参数值
     public function edit($pros_id)
     {
+        $systemList = SystemList::all();
         $field = Pros::find($pros_id);
         $field->pros_img_other = explode(',',$field->pros_img_other);
-        return view('admin/pros/edit',compact('field'));
+        return view('admin/pros/edit',compact('field','systemList'));
     }
     //put|patch admin/reward/{reward}  更新分类 {reward}是传参的参数值
     public function update($pros_id)
@@ -92,36 +98,15 @@ class ProsController extends Controller
 
         $re = Pros::where('pros_id',$pros_id)->update($input);
 
-        if($re){
-            $data = [
-                'status'=> 0,   //因为是ajax异步返回，所以返回一个json数据
-                'msg' => '修改成功',
-            ];
-        }else{
-            $data = [
-                'status'=> 1,   //因为是ajax异步返回，所以返回一个json数据
-                'msg' => '修改失败，请重试',
-            ];
-        }
-        return $data;
+        return $this->repo->changeResponse($re);
     }
 
     //delelte admin/reward/{reward}  删除分类
     public function destroy($pros_id)
     {
         $re = Pros::where('pros_id',$pros_id)->delete();
-        if($re){
-            $data = [
-                'status'=> 0,   //因为是ajax异步返回，所以返回一个json数据
-                'msg' => '删除成功',
-            ];
-        }else{
-            $data = [
-                'status'=> 1,   //因为是ajax异步返回，所以返回一个json数据
-                'msg' => '删除失败，请稍后重试',
-            ];
-        }
-        return $data;
+
+        return $this->repo->changeResponse($re);
     }
 
     //get  admin/reward/{reward}  显示单个分类信息

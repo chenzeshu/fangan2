@@ -11,7 +11,8 @@
         "laravelcollective/bus": "^5.2",
         "phpoffice/phpword": "v0.13.*",
         "phpmailer/phpmailer": "~5.2",
-        "zizaco/entrust": "5.2.x-dev"
+        "zizaco/entrust": "5.2.x-dev",
+        "laravelcollective/html": "5.2.x-dev"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

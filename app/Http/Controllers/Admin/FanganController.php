@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Model\Params;
 use App\Model\Pros;
 use App\Model\System;
+use App\Model\SystemList;
+use App\Repositories\FanganRepository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 
@@ -16,42 +18,27 @@ use Illuminate\Support\Facades\Schema;
 
 class FanganController extends CommonController
 {
-    /*
+    /**
      * 常用:session
      *    table   string    包括了table_id
      *    table_id   int    是个人第几张表
      *
-     * id是上级get传入
-     * 1 车载卫星通信分系统
-     * 2 行业分系统
-     * 3 音视频分系统
-     * 4 计算机网络办公分系统
-     * 5 话音指挥调度分系统
-     * 6 供配电分系统
-     * 7 车辆改装分系统
-     * 8 地面卫星站分系统
-     * 系统表已建，表名：zw_fa_system，暂时不做CRUD，纯后台维护
+     *  与系统名的关联键为"id"，未做ORM
      */
+
+    protected $repo;
+
+    function __construct(FanganRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function index($self_id)
     {
-        $username = session('username');
-        session(['table_id' => $self_id]);
-        session(['table' => 'space_'.$username.'_'.$self_id]);
-        $num = DB::table(session('table').'_order')->count();
-        if ($num){
-            //todo 如果order表有order
-            $orderData = DB::table(session('table').'_order')->first();
-            $order = $orderData->order;
-            if (!$order == ""){
-                //todo 如果$order不为空
-                $data = DB::table(session('table'))->orderBy(DB::raw('FIELD(id,'.$order.')'))->get();
-            }
-            //todo 如果order为空（通常发生在刚建表时）
-            $data = DB::table(session('table'))->orderBy('son')->orderBy('id')->get();  //先按系统排，也可以用groupBy
-        }else{
-            //todo 如果没有order数据，就按原生field()
-            $data = DB::table(session('table'))->orderBy('son')->orderBy('id')->get();  //先按系统排，也可以用groupBy
-        }
+        $username = $this->repo->sessionDeal($self_id);
+
+        $data = $this->repo->judgeOrder();
+
         //DB类没有find()
         $table = DB::table('space_'.$username)->where('self_id',$self_id)->first();
         $table_name = $table->self_name;
@@ -74,7 +61,8 @@ class FanganController extends CommonController
            DB::table(session('table'))->insert($input);
            return redirect(url('admin/fangan/index').'/'.session('table_id'));
        }else{
-           return view('admin/fangan/create');
+           $systemData = System::all();
+           return view('admin/fangan/create',compact('systemData'));
        }
 
     }
@@ -167,12 +155,12 @@ class FanganController extends CommonController
     public function edit($sys_id)
     {
         $sys = System::find($sys_id);
+        $systemList = SystemList::all();
         $sys_name = $sys['name'];
         //限制40条
         $pros = Pros::take(40)->get();
         $numrows = Pros::count();
-//        dd($pros);
-        return view('admin/fangan/pros',compact('pros','sys_name','numrows','sys_id'));
+        return view('admin/fangan/pros',compact('pros','sys_name','numrows','sys_id','systemList'));
     }
 
     //todo 搜索设备
@@ -197,8 +185,8 @@ class FanganController extends CommonController
         return $data;
     }
 
-    //todo 接收选择的设备ID并将设备添加到私人空间的方案表中
     //todo 添加设备
+    //接收选择的设备ID并将设备添加到私人空间的方案表中
     public function checkId()
     {
        $input = Input::except('_token');
@@ -211,6 +199,7 @@ class FanganController extends CommonController
             $array = [
 //                'id'=>$pro['pros_id'],
             //不该加ID，pro的id在个人表里重复了，所以造成了失败
+                'goodsid'=>$pro['pros_goodsid'],
                 'name'=>$pro['pros_name'],
                 'brand'=>$pro['pros_brand'],
                 'detail'=>$pro['pros_detail'],

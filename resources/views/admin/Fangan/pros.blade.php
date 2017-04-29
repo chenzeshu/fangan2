@@ -16,28 +16,11 @@
             <div class="result_content">
                 <div class="short_wrap">
                     <select name="pros_sys" id="pros_sys" class="self-border">
-                        <option value="">系统</option>
-                        <option value='卫星通信天线'>一、卫星通信天线</option>
-                        <option value='卫星功放'>二、卫星功放</option>
-                        <option value='卫星LNB'>三、卫星LNB</option>
-                        <option value='卫星通信机设备'>四、卫星通信机设备</option>
-                        <option value='卫星通信的辅助设备和器材'>五、卫星通信的辅助设备和器材</option>
-                        <option value='软件'>六、软件</option>
-                        <option value='北斗设备'>七、北斗设备</option>
-                        <option value='TD-LTE专网设备'>八、TD-LTE专网设备</option>
-                        <option value='卫星电话'>九、卫星电话</option>
-                        <option value='对讲设备'>十、对讲设备</option>
-                        <option value='短波设备'>十一、短波设备</option>
-                        <option value='VOIP语音网关'>十二、VOIP语音网关</option>
-                        <option value='语音调度及周边设备'>十三、语音调度及周边设备</option>
-                        <option value='计算机及网络设备'>十四、计算机及网络设备</option>
-                        <option value='视讯会议和编解码器'>十五、视讯会议和编解码器</option>
-                        <option value='图传设备'>十六、图传设备</option>
-                        <option value='视音频输入输出设备'>十七、视音频输入输出设备</option>
-                        <option value='电源设备'>十八、电源设备</option>
-                        <option value='辅助设备'>十九、辅助设备</option>
-                        <option value='载车'>二十、载车</option>
-                        <option value='信道、服务费用'>二十一、信道、服务费用</option>
+                        @if(isset($systemList))
+                            @foreach($systemList as $k=>$v)
+                        <option value='{{$v->name}}'>{{$k.'--'.$v->name}}</option>
+                            @endforeach
+                        @endif
                     </select>
                     <input type="text" id="pros_name" placeholder="输入设备名称">
                     <input type="text" id="pros_detail" placeholder="输入型号">
@@ -62,8 +45,8 @@
                         <tr>
                             {{--<th class="tc">ID</th>--}}
                             <th>选择</th>
-                            {{--<th>分系统</th>--}}
                             <th>名称</th>
+                            <th>物资编码</th>
                             <th>品牌</th>
                             <th>设备型号</th>
                             <th style="width: 250px;">简单描述</th>
@@ -86,9 +69,11 @@
                                 <input type="checkbox" name="pros_id[]" value="{{$v->pros_id}}" style="display: none;">
                                 <a href="#" class="check-false" onclick="return false">□</a>
                             </td>
-
                             <td>
                                 <a href="#">{{$v->pros_name}}</a>
+                            </td>
+                            <td>
+                                <a href="#">{{$v->pros_goodsid}}</a>
                             </td>
                             <td>
                                 <a href="#">{{$v->pros_brand}}</a>
@@ -100,18 +85,6 @@
                                 <a href="#">{{$v->pros_less}}</a>
                             </td>
                             <td><button class="uk-button uk-button-mini uk-button-primary" onclick="showDesAndImg({{$v->pros_id}})">图文弹框</button></td>
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_more}}</a>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_thumb}}</a>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_img}}</a>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_remark}}</a>--}}
-                            {{--</td>--}}
                             <td>
                                 <a href="#">{{$v->pros_unit}}</a>
                             </td>
@@ -224,7 +197,6 @@
             var sys=$('#pros_sys').val();
             var name=$('#pros_name').val();
             var detail=$('#pros_detail').val();
-
             //todo 防止提交空表单爆破数据库
             if(!(sys||name||detail)) {
                 alert("请至少输入一项数据！")
@@ -240,6 +212,7 @@
                     $.each(res,function (k,v) {
                         var id = v.pros_id
                         var name = v.pros_name
+                        var goodsid = v.pros_goodsid
                         var brand = v.pros_brand
                         var detail = v.pros_detail
                         var less = v.pros_less
@@ -250,12 +223,12 @@
                         var outprice = v.pros_display_outpirce
                         var remark = v.pros_remark
 
-                        $('#table').append('<tbody><tr>' +
+                        $('#table').append('<tr>' +
                                 '<td onclick="checkboxBug(this)">' +
                                     '<input type="checkbox" name="pros_id[]" value='+v.pros_id+' style="display: none;">' +
                                     '<a href="#" class="check-false" onclick="return false">□</a></td>' +
-                                '<td>' +
-                                '<a href="#">'+name+'</a></td>' +
+                                '<td><a href="#">'+name+'</a></td>' +
+                                '<td><a href="#">'+goodsid+'</a></td>' +
                                 '<td><a href="#">'+brand+'</a></td>' +
                                 '<td><a href="#">'+detail+'</a></td>' +
                                 '<td><a href="#">'+less+'</a></td>' +
@@ -266,11 +239,11 @@
                                 '<td><a href="#">'+inprice+'</a></td>' +
                                 '<td><a href="#">'+outprice+'</a></td>' +
                                 '<td><button class="uk-button uk-button-mini uk-button-success" onclick="showRemark('+id+')>备注</button></td>' +
-                                '</tr></tbody>')
+                                '</tr>')
                     })
                     $('tbody').css('opacity',0).animate({
                         opacity:1
-                    },1000,'linear')
+                    },600,'linear')
                 }
             })
 
@@ -281,7 +254,7 @@
 
                 obj.onkeydown =function () {
                     var e = event || window.event || arguments.callee.caller.arguments[0];
-                    if(e&&e.keyCode ==13){
+                    if(e && e.keyCode ==13){
                         var number = $(obj).val()
 
                         $.post("{{url('admin/fangan/renumber')}}",{id:id,number:number,_token:"{{csrf_token()}}"},function (data) {

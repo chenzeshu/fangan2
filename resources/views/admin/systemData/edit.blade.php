@@ -2,7 +2,7 @@
 @section('content')
     <!--面包屑导航 开始-->
     <div class="crumb_warp">
-        <i class="fa fa-home"></i> <a href="{{url('admin/params')}}">首页</a> &raquo; <a href="#">参数管理</a>
+        <i class="fa fa-home"></i> <a href="{{url('admin/params')}}">首页</a> &raquo; <a href="#">系统（清单）列表管理</a>
     </div>
     <!--面包屑导航 结束-->
     <div class="result_wrap">
@@ -23,36 +23,27 @@
 	<!--结果集标题与导航组件 开始-->
 	<div class="result_wrap">
         <div class="result_title">
-            <h3>编辑参数信息</h3>
+            <h3>编辑系统（清单）</h3>
         </div>
         <div class="result_content">
             <div class="short_wrap">
-                <a href="{{url('admin/params/create')}}"><i class="fa fa-plus"></i>添加参数信息</a>
-                <a href="{{url('admin/params')}}"><i class="fa fa-recycle"></i>全部参数信息</a>
+                <a href="{{url('admin/system/create')}}"><i class="fa fa-plus"></i>添加系统（清单）</a>
+                <a href="{{url('admin/system')}}"><i class="fa fa-recycle"></i>全部系统（清单）</a>
             </div>
         </div>
     </div>
     <!--结果集标题与导航组件 结束-->
 
     <div class="result_wrap">
-        <form action="{{url('admin/params/'.$field->pa_id)}}" method="post">
+        <form action="{{url('admin/system/'.$field->id)}}" method="post">
             <input type="hidden" name="_method" value="put">
             {{csrf_field()}}
             <table class="add_tab">
                 <tbody>
                 <tr>
-                    <th class="tc">美元汇率</th>
-                    <td><input type="text" class="md" name="pa_dollar" value="{{$field->pa_dollar}}"></td>
+                    <th class="tc">系统名称</th>
+                    <td><input type="text" class="md" name="name" value="{{$field->name}}"></td>
                 </tr>
-                <tr>
-                    <th>欧元汇率</th>
-                    <td><input type="text" class="md" name="pa_eu" value="{{$field->pa_eu}}"></td>
-                </tr>
-                <tr>
-                    <th>报价比例</th>
-                    <td><input type="text" class="md" name="pa_bili" value="{{$field->pa_bili}}"></td>
-                </tr>
-                <tr>
                     <th></th>
                     <td>
                         <input type="submit" value="提交">

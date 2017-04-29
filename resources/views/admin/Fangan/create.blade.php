@@ -46,14 +46,11 @@
                             <div class="uk-form-row">
                                 <div class="uk-form-controls" onchange="changeVal()">
                                     <select id="form-s-s" name="sys">
-                                        <option value="1">车载卫星通信分系统</option>
-                                        <option value="2">行业分系统</option>
-                                        <option value="3">音视频分系统</option>
-                                        <option value="4">计算机网络办公分系统</option>
-                                        <option value="5">话音指挥调度分系统</option>
-                                        <option value="6">供配电分系统</option>
-                                        <option value="7">车辆改装分系统</option>
-                                        <option value="8">地面卫星站分系统</option>
+                                        @if(isset($systemData))
+                                            @foreach($systemData as $k=>$v)
+                                            <option value="{{$v->id}}">{{$v->name}}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                     <label for="select" id="mention"></label>
                                     <input type="hidden" name="father" value="0">

@@ -43,28 +43,11 @@
                             <th>分系统：</th>
                             <td>
                                 <select name="pros_sys" id="" class="self-border">
-                                    <option value="1">系统</option>
-                                    <option value='卫星通信天线'>一、卫星通信天线</option>
-                                    <option value='卫星功放'>二、卫星功放</option>
-                                    <option value='卫星LNB'>三、卫星LNB</option>
-                                    <option value='卫星通信机设备'>四、卫星通信机设备</option>
-                                    <option value='卫星通信的辅助设备和器材'>五、卫星通信的辅助设备和器材</option>
-                                    <option value='软件'>六、软件</option>
-                                    <option value='北斗设备'>七、北斗设备</option>
-                                    <option value='TD-LTE专网设备'>八、TD-LTE专网设备</option>
-                                    <option value='卫星电话'>九、卫星电话</option>
-                                    <option value='对讲设备'>十、对讲设备</option>
-                                    <option value='短波设备'>十一、短波设备</option>
-                                    <option value='VOIP语音网关'>十二、VOIP语音网关</option>
-                                    <option value='语音调度及周边设备'>十三、语音调度及周边设备</option>
-                                    <option value='计算机及网络设备'>十四、计算机及网络设备</option>
-                                    <option value='视讯会议和编解码器'>十五、视讯会议和编解码器</option>
-                                    <option value='图传设备'>十六、图传设备</option>
-                                    <option value='视音频输入输出设备'>十七、视音频输入输出设备</option>
-                                    <option value='电源设备'>十八、电源设备</option>
-                                    <option value='辅助设备'>十九、辅助设备</option>
-                                    <option value='载车'>二十、载车</option>
-                                    <option value='信道、服务费用'>二十一、信道、服务费用</option>
+                                    @if(isset($systemList))
+                                        @foreach($systemList as $k=>$v)
+                                    <option value="{{$v->name}}">{{($k+1)."--".$v->name}}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </td>
                         </tr>
@@ -72,6 +55,12 @@
                             <th>设备名称：</th>
                             <td>
                                 <input type="text" class="md" name="pros_name" value="">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>物资编码：</th>
+                            <td>
+                                <input type="text" class="md" name="pros_goodsid" value="">
                             </td>
                         </tr>
                         <tr>

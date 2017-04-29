@@ -18,28 +18,11 @@
                     <a href="{{url('admin/pros/create')}}"><i class="fa fa-plus"></i>添加设备</a>
                     <a href="{{url('admin/pros')}}"><i class="fa fa-recycle"></i>全部设备</a>
                     <select name="" id="pros_sys" class="self-border" style="">
-                        <option value="">系统</option>
-                        <option value='卫星通信天线'>一、卫星通信天线</option>
-                        <option value='卫星功放'>二、卫星功放</option>
-                        <option value='卫星LNB'>三、卫星LNB</option>
-                        <option value='卫星通信机设备'>四、卫星通信机设备</option>
-                        <option value='卫星通信的辅助设备和器材'>五、卫星通信的辅助设备和器材</option>
-                        <option value='软件'>六、软件</option>
-                        <option value='北斗设备'>七、北斗设备</option>
-                        <option value='TD-LTE专网设备'>八、TD-LTE专网设备</option>
-                        <option value='卫星电话'>九、卫星电话</option>
-                        <option value='对讲设备'>十、对讲设备</option>
-                        <option value='短波设备'>十一、短波设备</option>
-                        <option value='VOIP语音网关'>十二、VOIP语音网关</option>
-                        <option value='语音调度及周边设备'>十三、语音调度及周边设备</option>
-                        <option value='计算机及网络设备'>十四、计算机及网络设备</option>
-                        <option value='视讯会议和编解码器'>十五、视讯会议和编解码器</option>
-                        <option value='图传设备'>十六、图传设备</option>
-                        <option value='视音频输入输出设备'>十七、视音频输入输出设备</option>
-                        <option value='电源设备'>十八、电源设备</option>
-                        <option value='辅助设备'>十九、辅助设备</option>
-                        <option value='载车'>二十、载车</option>
-                        <option value='信道、服务费用'>二十一、信道、服务费用</option>
+                        @if(isset($systemList))
+                            @foreach($systemList as $k => $v)
+                        <option value='{{$v->name}}'>{{($k+1).'-'.$v->name}}</option>
+                            @endforeach
+                        @endif
                     </select>
                     <input type="text" id="pros_name" placeholder="输入设备名称">
                     <input type="text" id="pros_detail" placeholder="输入型号">
@@ -55,14 +38,15 @@
                     <tr>
                         <th class="tc">ID</th>
                         <th>分系统</th>
+                        <th>物资编码</th>
                         <th>名称</th>
+                        <th>产地</th>
                         <th>品牌</th>
                         <th style="width: 150px;">设备型号</th>
                         {{--大图、简单描述、详细描述--}}
                         <th>图文弹框</th>
                         <th>数量</th>
                         <th>单位</th>
-                        <th>产地</th>
                         {{--参数表：体积、机柜尺寸、重量、功耗、--}}
                         <th>参数表</th>
                         <th>成本单价（元）</th>
@@ -84,7 +68,13 @@
                             <a href="#">{{$v->pros_sys}}</a>
                         </td>
                         <td>
+                            <a href="#">{{$v->pros_goodsid}}</a>
+                        </td>
+                        <td>
                             <a href="#">{{$v->pros_name}}</a>
+                        </td>
+                        <td>
+                            <a href="#">{{$v->pros_area}}</a>
                         </td>
                         <td>
                             <a href="#">{{$v->pros_brand}}</a>
@@ -95,26 +85,11 @@
                         <td>
                             <button class="uk-button uk-button-mini uk-button-primary" onclick="showDesAndImg({{$v->pros_id}})">图文弹框</button>
                         </td>
-                        {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_more}}</a>--}}
-                        {{--</td>--}}
-                        {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_thumb}}</a>--}}
-                        {{--</td>--}}
-                        {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_img}}</a>--}}
-                        {{--</td>--}}
-                        {{--<td>--}}
-                            {{--<a href="#">{{$v->pros_remark}}</a>--}}
-                        {{--</td>--}}
                         <td>
                             <a href="#">{{$v->pros_number}}</a>
                         </td>
                         <td>
                             <a href="#">{{$v->pros_unit}}</a>
-                        </td>
-                        <td>
-                            <a href="#">{{$v->pros_area}}</a>
                         </td>
                         <td><button class="uk-button uk-button-mini uk-button-primary" onclick="showParams({{$v->pros_id}})">参数表</button></td>
                         <td>
@@ -278,6 +253,7 @@
                     $.each(res,function (k,v) {
                         var id = v.pros_id
                         var sys = v.pros_sys
+                        var goodsid = v.pros_goodsid
                         var name = v.pros_name
                         var brand = v.pros_brand
                         var detail = v.pros_detail
@@ -293,9 +269,8 @@
                         $('#table').append('<tr>' +
                                 '<td>' +id +'</td>'+
                                 '<td><a href="#">'+sys+'</a></td>' +
-                                '<td>' +
-                                 '<a href="#">'+name+'</a>' +
-                                '</td>' +
+                                '<td><a href="#">'+goodsid+'</a></td>' +
+                                '<td><a href="#">'+name+'</a></td>' +
                                 '<td><a href="#">'+brand+'</a></td>' +
                                 '<td style="width: 150px;"><a href="#">'+detail+'</a></td>' +
                                 '<td><a href="#">' +
