@@ -10,17 +10,16 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, yet powerful, providing powerful tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
 
-## Official Documentation
+## 项目介绍
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+本项目旨在：<br>
+1、为企业提供一个多人维护的统一产品数据库；<br>
+2、方案（标书）撰写人员可以获得一个专属的空间，用于在线以从产品库中选取产品的形式编写标书；<br>
+3、提供excel及word导出功能；
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+## 特别使用的库
+1、Ueditor<br>
+2、Zicaco/Entrust
 
 ## License
 

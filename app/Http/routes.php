@@ -74,10 +74,12 @@ Route::group(['middleware'=>['web','admin.login'],'prefix'=>'admin','namespace' 
     Route::any('fangan/renumber','FanganController@reNumber'); //小表 改数字 AJAX
     Route::any('fangan/searchPros','FanganController@searchPros'); //小表 改数字 AJAX
 
-    //系统（数据库）列表
-    Route::resource('system','SystemController');
     //系统（清单）列表
+    Route::resource('system','SystemController');
+    //系统（数据库）列表
+    Route::get('systemList/download/{id}','SystemListController@download');
     Route::resource('systemList','SystemListController');
+
 });
 
 Route::group(['middleware'=>['web','admin.login'],'namespace' => 'Entrust'], function () {

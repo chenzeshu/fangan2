@@ -6,8 +6,21 @@
         <i class="fa fa-home"></i> <a href="{{url('admin/systemList')}}">首页</a> &raquo; <a href="#">系统（数据库）列表管理</a>
     </div>
     <!--面包屑导航 结束-->
-
-
+    <div class="result_wrap">
+        <div class="result_title">
+            <div class="mark">
+                @if(is_object($errors))
+                    @if(count($errors)>0)
+                        @foreach($errors->all() as $error)
+                            <p>{{$error}}</p>
+                        @endforeach
+                    @endif
+                @else
+                    <p>{{$errors}}</p>
+                @endif
+            </div>
+        </div>
+    </div>
     <!--搜索结果页面 列表 开始-->
         <div class="result_wrap">
             <div class="result_title">
@@ -27,7 +40,7 @@
                 <table class="list_tab">
                     <tr>
                         <th>系统名称</th>
-                        <th>操作</th>
+                        <th colspan="3">操作</th>
                     </tr>
                     @foreach($data as $v)
                     <tr>
@@ -35,6 +48,11 @@
                             <a href="#">{{$v->name}}</a>
                         </td>
                         <td>
+                            @if(empty($v->path))
+                                <a href="#">无文件</a>
+                            @else
+                            <a href="{{url('admin/systemList/download/'.$v->id)}}">下载文件</a>
+                            @endif
                             <a href="{{url('admin/systemList/'.$v->id.'/edit')}}">修改</a>
                             <a href="javascript:"onclick="deleteObj({{$v->id}})">删除</a>
                         </td>
@@ -59,7 +77,7 @@
             layer.confirm('确定删除本系统名？', {
                 btn: ['确定','取消'] //按钮
             }, function(){
-                $.post("{{url('admin/systemListList/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
+                $.post("{{url('admin/systemList/')}}/"+id,{'_method':'delete','_token':"{{csrf_token()}}"},function(data){
                     if(data.status=='0'){
                         layer.msg(data.msg, {icon: 6});
                         setTimeout(function(){
@@ -116,16 +134,7 @@
                 alert("请输入信息");
             }
         }
-          {{--function endOrder(obj,pa_id){--}}
-              {{--var order = $(obj).val();--}}
-              {{--$.post('{{url('admin/systemList/endorder')}}',{'_token':"{{csrf_token()}}",'order':order,'pa_id':pa_id},function (data) {--}}
-                  {{--if(data.status=='0'){--}}
-                      {{--layer.alert(data.msg,{icon: 6});--}}
-                  {{--}else{--}}
-                      {{--layer.alert(data.msg,{icon: 5});--}}
-                  {{--}--}}
-              {{--})--}}
-          {{--}--}}
+
 
     </script>
 @endsection

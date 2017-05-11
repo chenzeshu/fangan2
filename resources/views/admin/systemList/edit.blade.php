@@ -35,7 +35,7 @@
     <!--结果集标题与导航组件 结束-->
 
     <div class="result_wrap">
-        <form action="{{url('admin/systemList/'.$field->id)}}" method="post">
+        <form action="{{url('admin/systemList/'.$field->id)}}" method="post" enctype="multipart/form-data>
             <input type="hidden" name="_method" value="put">
             {{csrf_field()}}
             <table class="add_tab">
@@ -43,6 +43,18 @@
                 <tr>
                     <th class="tc">系统名称</th>
                     <td><input type="text" class="md" name="name" value="{{$field->name}}"></td>
+                </tr>
+                <tr>
+                    <th class="tc">系统文件（小于10MB）</th>
+                    <td>
+                        @if(empty($field->path))
+                            <p>修改前未上传文件</p>
+                            @else
+                            <strong>本系统之前已上传文件，是否要进行修改？</strong><br>
+                            @endif
+                        <input type="file" name="file">
+                        <div id="warning"></div>
+                    </td>
                 </tr>
                     <th></th>
                     <td>

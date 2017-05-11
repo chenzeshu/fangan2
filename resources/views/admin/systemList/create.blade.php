@@ -35,7 +35,7 @@
     <!--结果集标题与导航组件 结束-->
 
     <div class="result_wrap">
-        <form action="{{url('admin/systemList/')}}" method="post">
+        <form action="{{url('admin/systemList/')}}" method="post" enctype="multipart/form-data">
             {{csrf_field()}}
             <table class="add_tab">
                 <tbody>
@@ -43,6 +43,13 @@
                         <th class="tc">系统名称</th>
                         <td>
                             <input type="text" class="md" name="name" placeholder="填写系统名称">
+                            <div id="warning"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="tc">系统文件（小于10MB）</th>
+                        <td>
+                            <input type="file" name="file">
                             <div id="warning"></div>
                         </td>
                     </tr>

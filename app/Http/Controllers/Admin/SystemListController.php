@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class SystemListController extends CommonController
 {
@@ -40,11 +43,21 @@ class SystemListController extends CommonController
     public function store(Request $request)
     {
         $if = SystemList::where('name',$request->name)->first();
+        $path = null;
+        //文件存储
+        if($request->hasFile('file')){
+            $file = $request->file('file');
+            $ext = $file->getClientOriginalExtension();
+            $path = $file->move(storage_path('app\public\system'));
+        }
 
         if(!$if){
             $re = SystemList::create([
-                'name' => $request->name
+                'name' => $request->name,
+                'path' => $path,
+                'ext' =>$ext
             ]);
+
             if($re){
                 return redirect('admin/systemList');
             }else{
@@ -87,19 +100,33 @@ class SystemListController extends CommonController
      */
     public function update(Request $request, $id)
     {
-        $if = SystemList::where('name',$request->name)->first();
-        if(!$if){
-            $re = SystemList::where('id',$id)->update([
-                'name'=>$request->name
-            ]);
-            if($re){
-                return redirect('admin/systemList');
-            }else{
-                return back()->with('errors','系统修改失败,请重试！');
+        $if = SystemList::findOrFail($id);
+        $path = $if->path;
+        $ext = $if->ext;
+        //文件存储
+        if($request->hasFile('file')){
+            if(!empty($path)){
+                $_path = explode('\\', $path);
+                $_path = $_path[6].'\\'.$_path[7].'\\'.$_path[8];
+                Storage::delete($_path);
             }
-        }else{
-            return back()->with('errors','系统名已存在！');
+            $file = $request->file('file');
+            $ext = $file->getClientOriginalExtension();
+            $path = $file->move(storage_path('app\public\system'));
         }
+
+        $re = SystemList::where('id',$id)->update([
+            'name'=>$request->name,
+            'path'=>$path,
+            'ext'=>$ext
+        ]);
+
+        if($re){
+            return redirect('admin/systemList');
+        }else{
+            return back()->with('errors','系统修改失败,请重试！');
+        }
+
     }
 
     /**
@@ -110,7 +137,15 @@ class SystemListController extends CommonController
      */
     public function destroy($id)
     {
-        $re = SystemList::where('id', $id)->delete();
+        $file = SystemList::findOrFail($id);
+        $path = $file->path;
+        if(!empty($path)){
+            $_path = explode('\\', $path);
+            $_path = $_path[6].'\\'.$_path[7].'\\'.$_path[8];
+            Storage::delete($_path);
+        }
+
+        $re = $file->delete();
         if($re){
             $data = [
                 'status'=> 0,   //因为是ajax异步返回，所以返回一个json数据
@@ -123,5 +158,20 @@ class SystemListController extends CommonController
             ];
         }
         return $data;
+    }
+
+    public function download($id)
+    {
+        $file = SystemList::findOrFail($id);
+        $path = $file->path;
+        if(empty($path)){
+            return Redirect::back()->withErrors('本系统尚未上传文件');
+        }
+        else{
+            $_path = explode('\\', $path);
+            $_path = $_path[5].'\\'.$_path[6].'\\'.$_path[7].'\\'.$_path[8];
+            return response()->download(storage_path($_path), $file->name.".".$file->ext);
+        }
+
     }
 }
