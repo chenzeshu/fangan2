@@ -15,11 +15,17 @@ Laravel is accessible, yet powerful, providing powerful tools needed for large, 
 本项目旨在：<br>
 1、为企业提供一个多人维护的统一产品数据库；<br>
 2、方案（标书）撰写人员可以获得一个专属的空间，用于在线以从产品库中选取产品的形式编写标书；<br>
-3、提供excel及word导出功能；
+3、实现设备清单拖拽排序；<br>
+4、提供excel及word导出功能；
 
 ## 特别使用的库
 1、Ueditor<br>
-2、Zicaco/Entrust
+2、Zicaco/Entrust<br>
+3、Uploadify<br>
+4、Phpoffice<br>
+5、layer<br>
+6、laydate<br>
+7、slidepage
 
 ## License
 
