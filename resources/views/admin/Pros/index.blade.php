@@ -18,6 +18,7 @@
                     <a href="{{url('admin/pros/create')}}"><i class="fa fa-plus"></i>添加设备</a>
                     <a href="{{url('admin/pros')}}"><i class="fa fa-recycle"></i>全部设备</a>
                     <select name="" id="pros_sys" class="self-border" style="">
+                        <option value="all">全部系统</option>
                         @if(isset($systemList))
                             @foreach($systemList as $k => $v)
                         <option value='{{$v->name}}'>{{($k+1).'-'.$v->name}}</option>

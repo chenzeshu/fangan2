@@ -80,18 +80,6 @@
                             <td>
                                 <button class="uk-button uk-button-mini uk-button-primary" onclick="showDesAndImg({{$v->sysid}})">图文弹框</button>
                             </td>
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->more}}</a>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->thumb}}</a>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->img}}</a>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                            {{--<a href="#">{{$v->remark}}</a>--}}
-                            {{--</td>--}}
                             <td>
                                 <input type="text" value="{{$v->number}}" class="renumber" onclick="reNumber(this,{{$v->id}})">
                             </td>
@@ -134,6 +122,7 @@
         {border:1px solid #e1e1e1;border-collapse: collapse}
     </style>
     <script>
+        var cc = console.log
         $(function () {
             //todo 初始渐变效果
             $('#hideTable').css('opacity',0).animate({
@@ -151,6 +140,7 @@
                         order += $(this).attr('id') + ',';
                     })
                     order = order.substring(0,order.length-1);
+
                     $.post("{{url('admin/fangan/reorder')}}",{order:order,_token:"{{csrf_token()}}"},function (data) {
                         window.location=window.location
                     })

@@ -121,11 +121,18 @@ class ProsController extends Controller
         $sys = $input['sys'];
         $name =$input['name'];
         $detail =$input['detail'];
+        if($sys == "all"){
+            $pros = Pros::where('pros_name','like','%'.$name.'%')
+                ->where('pros_detail','like','%'.$detail.'%')
+                ->get();
+        }
+        else{
+            $pros = Pros::where('pros_sys','like','%'.$sys.'%')
+                ->where('pros_name','like','%'.$name.'%')
+                ->where('pros_detail','like','%'.$detail.'%')
+                ->get();
+        }
 
-        $pros = Pros::where('pros_sys','like','%'.$sys.'%')
-            ->where('pros_name','like','%'.$name.'%')
-            ->where('pros_detail','like','%'.$detail.'%')
-            ->get();
 
         if ($pros){
             $data =[

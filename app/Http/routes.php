@@ -25,16 +25,16 @@ Route::group(['middleware' => ['web']], function () {\
     Route::any('upload','Admin\CommonController@upload');
     Route::any('delimg','Admin\CommonController@delimg');
 
-    Route::get('excel/export_mingxi','ExcelController@export_mingxi');
-    Route::get('excel/export_huizong1','ExcelController@export_huizong1');  //生成汇总_部门1Excel
-    Route::get('excel/export_huizong2','ExcelController@export_huizong2');  //生成汇总_部门2Excel
-    Route::get('excel/export_shui','ExcelController@export_shui');          //生成汇总_部门2Excel
-    Route::get('excel/export_gongzi','ExcelController@export_gongzi');      //生成工资发放表
-    Route::get('excel/export_jixiao','ExcelController@export_jixiao');      //生成绩效明细表
-    Route::get('excel/export_jiangjin','ExcelController@export_jiangjin');  //生成越绩效奖金表
-    Route::get('excel/export_jxhz1','ExcelController@export_jxhz1');        //生成绩效明细表
-    Route::get('excel/export_jxhz2','ExcelController@export_jxhz2');        //生成绩效明细表
-    Route::get('excel/export_sanbu','ExcelController@export_sanbu');        //生成绩效明细表
+//    Route::get('excel/export_mingxi','ExcelController@export_mingxi');
+//    Route::get('excel/export_huizong1','ExcelController@export_huizong1');  //生成汇总_部门1Excel
+//    Route::get('excel/export_huizong2','ExcelController@export_huizong2');  //生成汇总_部门2Excel
+//    Route::get('excel/export_shui','ExcelController@export_shui');          //生成汇总_部门2Excel
+//    Route::get('excel/export_gongzi','ExcelController@export_gongzi');      //生成工资发放表
+//    Route::get('excel/export_jixiao','ExcelController@export_jixiao');      //生成绩效明细表
+//    Route::get('excel/export_jiangjin','ExcelController@export_jiangjin');  //生成越绩效奖金表
+//    Route::get('excel/export_jxhz1','ExcelController@export_jxhz1');        //生成绩效明细表
+//    Route::get('excel/export_jxhz2','ExcelController@export_jxhz2');        //生成绩效明细表
+//    Route::get('excel/export_sanbu','ExcelController@export_sanbu');        //生成绩效明细表
     //EXCEL导入
     Route::get('excel/import','ExcelController@import');
     //发送右键

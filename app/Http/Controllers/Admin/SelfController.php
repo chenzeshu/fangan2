@@ -64,9 +64,11 @@ class SelfController extends CommonController
         $username = session('username');
 
         $request = $request->except('_token');
-        $request->created_at = time();
 
-        $re = DB::table('space_'.$username)->insert($request);
+        $re = DB::table('space_'.$username)->insert([
+            'self_name'=>$request['self_name'],
+            'created_at'=>time()
+            ]);
 
         if($re){
         //todo 大表中已存在小表ID后，开始建造小表
