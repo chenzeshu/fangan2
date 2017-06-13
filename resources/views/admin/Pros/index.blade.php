@@ -213,12 +213,12 @@
         }
         //todo 备注弹窗
         function showRemark(id) {
-            $.post("{{url('admin/prosshowdesandimg')}}",{id:id,_token:"{{csrf_token()}}"},function (data) {
+            $.post("{{url('admin/prosshowremark')}}",{id:id,_token:"{{csrf_token()}}"},function (data) {
                 layer.open({
                     type: 1,
                     skin: 'layui-layer-rim', //加上边框
                     area: ['630px', '420px'], //宽高
-                    content: '备注：<p>'+data.remark+'</p>'
+                    content: '<p>'+data+'</p>'
                 });
             })
         }

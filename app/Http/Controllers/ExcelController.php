@@ -101,10 +101,11 @@ class ExcelController extends Controller
 
 
             });
-        })->export('xls',[
+        })
+            ->export('xls',[
             "Content-type"=>"application/vnd.ms-excel;charset=UTF-8",
             "Content-Disposition"=>"attachment"
-        ]);
+            ]);
     }
 
 

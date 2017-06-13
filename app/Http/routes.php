@@ -25,16 +25,16 @@ Route::group(['middleware' => ['web']], function () {\
     Route::any('upload','Admin\CommonController@upload');
     Route::any('delimg','Admin\CommonController@delimg');
 
-//    Route::get('excel/export_mingxi','ExcelController@export_mingxi');
-//    Route::get('excel/export_huizong1','ExcelController@export_huizong1');  //生成汇总_部门1Excel
-//    Route::get('excel/export_huizong2','ExcelController@export_huizong2');  //生成汇总_部门2Excel
-//    Route::get('excel/export_shui','ExcelController@export_shui');          //生成汇总_部门2Excel
-//    Route::get('excel/export_gongzi','ExcelController@export_gongzi');      //生成工资发放表
-//    Route::get('excel/export_jixiao','ExcelController@export_jixiao');      //生成绩效明细表
-//    Route::get('excel/export_jiangjin','ExcelController@export_jiangjin');  //生成越绩效奖金表
-//    Route::get('excel/export_jxhz1','ExcelController@export_jxhz1');        //生成绩效明细表
-//    Route::get('excel/export_jxhz2','ExcelController@export_jxhz2');        //生成绩效明细表
-//    Route::get('excel/export_sanbu','ExcelController@export_sanbu');        //生成绩效明细表
+    Route::get('excel/export_mingxi','ExcelController@export_mingxi');
+    Route::get('excel/export_huizong1','ExcelController@export_huizong1');  //生成汇总_部门1Excel
+    Route::get('excel/export_huizong2','ExcelController@export_huizong2');  //生成汇总_部门2Excel
+    Route::get('excel/export_shui','ExcelController@export_shui');          //生成汇总_部门2Excel
+    Route::get('excel/export_gongzi','ExcelController@export_gongzi');      //生成工资发放表
+    Route::get('excel/export_jixiao','ExcelController@export_jixiao');      //生成绩效明细表
+    Route::get('excel/export_jiangjin','ExcelController@export_jiangjin');  //生成越绩效奖金表
+    Route::get('excel/export_jxhz1','ExcelController@export_jxhz1');        //生成绩效明细表
+    Route::get('excel/export_jxhz2','ExcelController@export_jxhz2');        //生成绩效明细表
+    Route::get('excel/export_sanbu','ExcelController@export_sanbu');        //生成绩效明细表
     //EXCEL导入
     Route::get('excel/import','ExcelController@import');
     //发送右键
@@ -60,6 +60,7 @@ Route::group(['middleware'=>['web','admin.login'],'prefix'=>'admin','namespace' 
     Route::any('prosearch','ProsController@proSearch'); //数据库 查询
     Route::any('prosshowdesandimg','ProsController@showDesAndImg'); //数据库 图文弹窗
     Route::any('prosshowparams','ProsController@showParams'); //数据库 图文弹窗
+    Route::any('prosshowremark','ProsController@showRemark'); //数据库 图文弹窗
     Route::resource('params', 'ParamsController');  //参数表
     Route::resource('self', 'SelfController'); //个人空间
     Route::any('createSpace','SelfController@createSpace'); //创建个人空间
@@ -74,12 +75,11 @@ Route::group(['middleware'=>['web','admin.login'],'prefix'=>'admin','namespace' 
     Route::any('fangan/renumber','FanganController@reNumber'); //小表 改数字 AJAX
     Route::any('fangan/searchPros','FanganController@searchPros'); //小表 改数字 AJAX
 
-    //系统（清单）列表
-    Route::resource('system','SystemController');
     //系统（数据库）列表
+    Route::resource('system','SystemController');
+    //系统（清单）列表
     Route::get('systemList/download/{id}','SystemListController@download');
     Route::resource('systemList','SystemListController');
-
 });
 
 Route::group(['middleware'=>['web','admin.login'],'namespace' => 'Entrust'], function () {

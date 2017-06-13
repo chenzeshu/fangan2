@@ -121,6 +121,7 @@ class ProsController extends Controller
         $sys = $input['sys'];
         $name =$input['name'];
         $detail =$input['detail'];
+
         if($sys == "all"){
             $pros = Pros::where('pros_name','like','%'.$name.'%')
                 ->where('pros_detail','like','%'.$detail.'%')
@@ -149,6 +150,14 @@ class ProsController extends Controller
         $input = Input::except('_token');
         $pro = Pros::find($input['id']);
         return $pro;
+    }
+
+    //备注
+    public function showRemark(){
+        $input = Input::except('_token');
+        $id = $input['id'];
+        $remark = Pros::find($id)->pros_remark;
+        return $remark;
     }
 
 }
