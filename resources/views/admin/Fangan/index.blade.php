@@ -61,6 +61,7 @@
                                 <a href="javascript:"onclick="deleteObj({{$m->id}})">删除</a>
                             </td>
                         </tr>
+                        {{--&可以使每次循环的$v的指针都指向$data的头部，而不因为两个$data的循环而造成错乱。--}}
                         @foreach($data as &$v)
                             @if($v->father == $m->son)
                         <tr id="{{$v->id}}">
@@ -70,6 +71,9 @@
                             </td>
                             <td>
                                 <a href="#">{{$v->name}}</a>
+                            </td>
+                            <td>
+                                <a href="#">{{$v->area}}</a>
                             </td>
                             <td>
                                 <a href="#">{{$v->brand}}</a>
@@ -86,9 +90,7 @@
                             <td>
                                 <a href="#">{{$v->unit}}</a>
                             </td>
-                            <td>
-                                <a href="#">{{$v->area}}</a>
-                            </td>
+
                             <td><button class="uk-button uk-button-mini uk-button-primary" onclick="showParams({{$v->sysid}})">参数表</button></td>
                             <td>
                                 <a href="#">{{$v->display_inprice}}</a>

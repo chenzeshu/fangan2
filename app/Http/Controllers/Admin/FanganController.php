@@ -36,7 +36,6 @@ class FanganController extends CommonController
     public function index($self_id)
     {
         $username = $this->repo->sessionDeal($self_id);
-
         $data = $this->repo->judgeOrder();
 
         //DB类没有find()
@@ -88,7 +87,10 @@ class FanganController extends CommonController
         return $data;
     }
 
-    //重新排序tableDND的AJAX
+    /**
+     * 更改表的设备排列顺序
+     * @return mixed
+     */
     public function reOrder()
     {
         $input = Input::except('_token');
@@ -109,6 +111,10 @@ class FanganController extends CommonController
 
     }
 
+    /**
+     * 更改设备数量
+     * @return array
+     */
     public function reNumber()
     {
         $input = Input::except('_token');
@@ -159,6 +165,9 @@ class FanganController extends CommonController
         $sys_name = $sys['name'];
         //限制40条
         $pros = Pros::take(40)->get();
+        //todo 拿到display_price
+        $pros = $this->repo->getDisplayPrice($pros);
+
         $numrows = Pros::count();
         return view('admin/fangan/pros',compact('pros','sys_name','numrows','sys_id','systemList'));
     }
@@ -175,6 +184,8 @@ class FanganController extends CommonController
                 ->where('pros_name','like','%'.$name.'%')
                 ->where('pros_detail','like','%'.$detail.'%')
                 ->get();
+        //todo 拿到display_price
+        $pros = $this->repo->getDisplayPrice($pros);
 
         if ($pros){
             $data =[
@@ -194,57 +205,30 @@ class FanganController extends CommonController
         $sys_id = $input['sys_id'];
         $ids = explode(',',$input['ids']);
 
-        foreach ($ids as $v){
-            $pro = Pros::find($v);
-            $array = [
-//                'id'=>$pro['pros_id'],
-            //不该加ID，pro的id在个人表里重复了，所以造成了失败
-                'goodsid'=>$pro['pros_goodsid'],
-                'name'=>$pro['pros_name'],
-                'brand'=>$pro['pros_brand'],
-                'detail'=>$pro['pros_detail'],
-                'less'=>$pro['pros_less'],
-                'more'=>$pro['pros_more'],
-                'number'=>$pro['pros_number'],
-                'unit'=>$pro['pros_unit'],
-                'area'=>$pro['pros_area'],
-                'vol'=>$pro['pros_vol'],
-                'u'=>$pro['pros_u'],
-                'kg'=>$pro['pros_kg'],
-                'w'=>$pro['pros_w'],
-                'display_inprice'=>$pro['pros_display_inprice'],
-                'display_outprice'=>$pro['pros_display_outprice'],
-                'remark'=>$pro['pros_remark'],
-                'thumb'=>$pro['pros_thumb'],
-                'img'=>$pro['pros_img'],
-                'flag_money'=>$pro['pros_flag_money'],
-                'flag_bili'=>$pro['pros_flag_bili'],
-                'father'=>$sys_id,
-                'son'=>999,
-                'sysid'=>$v,
-                'img'=>$pro['pros_img'],
-                'img_other'=>$pro['pros_img_other'],
-                'img_other_name'=>$pro['pros_img_other_name']
-            ];
-            DB::table(session('table'))->insert($array);
-        }
-        //上面，使用一维数组$array,每次循环覆盖，可以节约服务器内存，而不要使用二维数组$array[$v]
+        //2017.615
+        $pros = Pros::find($ids);
+        DB::transaction(function ()use($pros, $ids, $sys_id){
+            foreach ($pros as $k => $pro) {
+                $array = [
+                    'goodsid'=>$pro['pros_goodsid'], 'name'=>$pro['pros_name'],
+                    'brand'=>$pro['pros_brand'], 'detail'=>$pro['pros_detail'],
+                    'less'=>$pro['pros_less'], 'more'=>$pro['pros_more'],
+                    'number'=>$pro['pros_number'], 'unit'=>$pro['pros_unit'],
+                    'area'=>$pro['pros_area'], 'vol'=>$pro['pros_vol'],
+                    'u'=>$pro['pros_u'], 'kg'=>$pro['pros_kg'], 'w'=>$pro['pros_w'],
+                    'display_inprice'=>$pro['pros_display_inprice'],
+                    'display_outprice'=>$pro['pros_display_outprice'], 'remark'=>$pro['pros_remark'],
+                    'thumb'=>$pro['pros_thumb'], 'img'=>$pro['pros_img'],
+                    'flag_money'=>$pro['pros_flag_money'], 'flag_bili'=>$pro['pros_flag_bili'],
+                    'father'=>$sys_id, 'son'=>999, 'sysid'=>$ids[$k], //sysid指设备在pros表中的id
+                    'img'=>$pro['pros_img'],
+                    'img_other'=>$pro['pros_img_other'],
+                    'img_other_name'=>$pro['pros_img_other_name']
+                ];
+                DB::table(session('table'))->insert($array);
+            }
 
-        //todo 收尾
-        //todo 因为这个insert()不返回true or false,所以只能默认成功了。
-        //收尾者
-//        if ($re){
-//            $data = [
-//                //成功
-//              'status'=>0,
-//            ];
-//        }else{
-//            $data = [
-//                //失败
-//              'status'=>1,
-//                'msg'=>'失败，请重试，连续失败请上报'
-//            ];
-//        }
-//        return $data;
+        });
+        return 'ok';
     }
 }

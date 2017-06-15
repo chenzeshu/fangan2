@@ -6,6 +6,7 @@ use App\Model\Params;
 use App\Model\Pros;
 use App\Model\System;
 use App\Model\SystemList;
+use App\Repositories\FanganRepository;
 use App\Repositories\ProsRepositories;
 use Illuminate\Http\Request;
 
@@ -20,14 +21,16 @@ class ProsController extends Controller
      * pros的系统为关联键为"name"，同时，没有做ORM，纯手工关联。
      */
     protected $repo;
-
-    public function __construct(ProsRepositories $repo)
+    protected $fangan;
+    public function __construct(ProsRepositories $repo, FanganRepository $fangan)
     {
         $this->repo = $repo;
+        $this->fangan = $fangan;
     }
 
     public function index(){
         $data = Pros::orderBy('pros_id','asc')->paginate(10);
+        $data = $this->fangan->getDisplayPrice($data);
         $systemList = SystemList::all();
         $links = $data->links();
         return view('admin/pros/index',compact('data', 'systemList'));
@@ -42,13 +45,16 @@ class ProsController extends Controller
 
     public function store()
     {
-        $input = Input::except('_token');
+        $input = Input::except(['_token','file_upload','file_upload2']);
 
         $rules = [
             'pros_name'=>'required',
         ];
-        $input['pros_img_other']=implode(',',$input['pros_img_other']);
-        $input['pros_img_other_name']=implode(',',$input['pros_img_other_name']);
+        if(isset($input['pros_img_other']) && isset($input['pros_img_other_name'])){
+            $input['pros_img_other']=implode(',',$input['pros_img_other']);
+            $input['pros_img_other_name']=implode(',',$input['pros_img_other_name']);
+        }
+
         $message = [
             'pros_name.required' =>'[设备名称]必须填写',
         ];
@@ -62,6 +68,8 @@ class ProsController extends Controller
             $eu = $params['pa_eu'];
             $bili = $params['pa_bili'];
 
+         //fixme 根据2017.6.15更改，要么在create时就存入display_price，要么就在取时换算出display_price
+        //个人倾向于存时换算， 否则大批量取时有损性能。----未fix
             //todo 返回各种币种换算后的人民币价格
             $input['pros_display_inprice'] = $this->repo
                 ->judgeInprice($input['pros_flag_money'], $input['pros_inprice'], $dollar, $eu);
@@ -133,7 +141,6 @@ class ProsController extends Controller
                 ->where('pros_detail','like','%'.$detail.'%')
                 ->get();
         }
-
 
         if ($pros){
             $data =[

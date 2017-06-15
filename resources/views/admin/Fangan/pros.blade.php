@@ -17,6 +17,7 @@
                 <div class="short_wrap">
                     <select name="pros_sys" id="pros_sys" class="self-border">
                         @if(isset($systemList))
+                        <option value=''>全部系统</option>
                             @foreach($systemList as $k=>$v)
                         <option value='{{$v->name}}'>{{$k.'--'.$v->name}}</option>
                             @endforeach
@@ -49,7 +50,6 @@
                             <th>物资编码</th>
                             <th>品牌</th>
                             <th>设备型号</th>
-                            <th style="width: 250px;">简单描述</th>
                             {{--大图、详细描述--}}
                             <th>图文弹框</th>
                             <th>单位</th>
@@ -80,9 +80,6 @@
                             </td>
                             <td>
                                 <a href="#">{{$v->pros_detail}}</a>
-                            </td>
-                            <td>
-                                <a href="#">{{$v->pros_less}}</a>
                             </td>
                             <td><button class="uk-button uk-button-mini uk-button-primary" onclick="showDesAndImg({{$v->pros_id}})">图文弹框</button></td>
                             <td>
@@ -231,7 +228,6 @@
                                 '<td><a href="#">'+goodsid+'</a></td>' +
                                 '<td><a href="#">'+brand+'</a></td>' +
                                 '<td><a href="#">'+detail+'</a></td>' +
-                                '<td><a href="#">'+less+'</a></td>' +
                                 '<td><a href="#"><button class="uk-button uk-button-mini uk-button-primary" onclick="showDesAndImg('+id+')">图文弹框</button></a></td>' +
                                 '<td><a href="#">'+unit+'</a></td>' +
                                 '<td><a href="#">'+area+'</a></td>' +

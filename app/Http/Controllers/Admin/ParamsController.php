@@ -39,7 +39,7 @@ class ParamsController extends Controller
         if($validator->passes()){
             $re = Params::create($input);
             if($re){
-                return redirect('admin/Params');
+                return redirect('admin/params');
             }else{
                 return back()->with('errors','数据填充失败，请稍后重试！');
             }
@@ -61,7 +61,7 @@ class ParamsController extends Controller
 
         $re = Params::where('pa_id',$pa_id)->update($input);
         if($re){
-            return redirect('admin/Params');
+            return redirect('admin/params');
         }else{
             return back()->with('errors','商品修改失败,请重试！');
         }
