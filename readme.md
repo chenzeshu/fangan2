@@ -27,6 +27,13 @@
 6、laydate<br>
 7、slidepage
 
+## 更新
+2017.6.15
+ - 个人方案表的设别排列顺序改为先插入的在上方显示；
+ - 修复了进出厂价格不显示的问题；
+ - 修复了汇率的路由大小写问题；
+ - 增加了全部设备的搜索选项；
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
