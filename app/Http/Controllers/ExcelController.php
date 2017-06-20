@@ -19,7 +19,6 @@ class ExcelController extends Controller
     //todo 方案EXCEL导出
     public function export_fangan($tablename)
     {
-
         //按照order表导出
         $orderData = DB::table(session('table').'_order')->first();
         $order = $orderData->order;
@@ -115,25 +114,25 @@ class ExcelController extends Controller
 
         $array = array();
         foreach ($data as $k => $v){
-            $array[$k]['mx_id']=$v['mx_id'];
-            $array[$k]['mx_name']=$v['mx_name'];
-            $array[$k]['mx_salary']=$v['mx_salary'];
-            $array[$k]['mx_bu']=$v['mx_bu'];
-            $array[$k]['mx_kou']=$v['mx_kou'];
-            $array[$k]['mx_jia']=$v['mx_jia'];
-            $array[$k]['mx_lin']=$v['mx_lin'];
-            $array[$k]['mx_ying']=$v['mx_ying'];
-            $array[$k]['mx_kong']=' ';  //特别空一列
-            $array[$k]['mx_gh']=$v['mx_gh'];
-            $array[$k]['mx_gong']=$v['mx_gong'];
-            $array[$k]['mx_yang']=$v['mx_yang'];
-            $array[$k]['mx_shi']=$v['mx_shi'];
-            $array[$k]['mx_yi']=$v['mx_yi'];
-            $array[$k]['mx_bujiao']=$v['mx_bujiao'];
-            $array[$k]['mx_bugong']=$v['mx_bugong'];
-            $array[$k]['mx_shui']=$v['mx_shui'];
-            $array[$k]['mx_fang']=$v['mx_fang'];
-            $array[$k]['mx_shifa']=$v['mx_shifa'];
+                $array[$k]['mx_id']=$v['mx_id'];
+                $array[$k]['mx_name']=$v['mx_name'];
+                $array[$k]['mx_salary']=$v['mx_salary'];
+                $array[$k]['mx_bu']=$v['mx_bu'];
+                $array[$k]['mx_kou']=$v['mx_kou'];
+                $array[$k]['mx_jia']=$v['mx_jia'];
+                $array[$k]['mx_lin']=$v['mx_lin'];
+                $array[$k]['mx_ying']=$v['mx_ying'];
+                $array[$k]['mx_kong']=' ';  //特别空一列
+                $array[$k]['mx_gh']=$v['mx_gh'];
+                $array[$k]['mx_gong']=$v['mx_gong'];
+                $array[$k]['mx_yang']=$v['mx_yang'];
+                $array[$k]['mx_shi']=$v['mx_shi'];
+                $array[$k]['mx_yi']=$v['mx_yi'];
+                $array[$k]['mx_bujiao']=$v['mx_bujiao'];
+                $array[$k]['mx_bugong']=$v['mx_bugong'];
+                $array[$k]['mx_shui']=$v['mx_shui'];
+                $array[$k]['mx_fang']=$v['mx_fang'];
+                $array[$k]['mx_shifa']=$v['mx_shifa'];
             }
 
 //        $year = date('Y',time());

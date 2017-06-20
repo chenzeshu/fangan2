@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\DB;
 
 class FanganRepository
 {
+    //返回AJAX信息
+    public $callback_success = [
+        "status"=>0,
+        "msg"=>"删除成功"
+    ];
+
+    public $callback_error = [
+        "status"=>1,
+        "msg"=>"删除失败"
+    ];
+
     public function sessionDeal($self_id)
     {
         $username = session('username');
@@ -49,7 +60,7 @@ class FanganRepository
             $data = DB::table($table_name)->orderBy('son', 'desc')->orderBy('id', 'desc')->get();  //先按系统排，也可以用groupBy
         }
 
-        return array_reverse($data);
+        return $data;
     }
 
     /**
@@ -69,15 +80,15 @@ class FanganRepository
         foreach ($pros as $k => $pro){
             switch ($pro->pros_flag_money){
                 case "1": //美元
-                    $pro->pros_display_inprice = $pro->pros_inprice * $mei * 1.2285; //1.17*1.05 = 1.2285
-                    $pro->pros_display_outprice = $pro->pros_outprice * $mei * 1.2285;
+                    $pro->pros_display_inprice = $pro->pros_inprice * $mei;
+                    $pro->pros_display_outprice = $pro->pros_outprice * $mei * 1.2285; //1.17*1.05 = 1.2285
                     break;
                 case "2": //欧元
-                    $pro->pros_display_inprice = $pro->pros_inprice * $eu * 1.2285;
+                    $pro->pros_display_inprice = $pro->pros_inprice * $eu;
                     $pro->pros_display_outprice = $pro->pros_outprice * $eu * 1.2285;
                     break;
                 default: //人民币
-                    $pro->pros_display_inprice = $pro->pros_inprice * 1.2285;
+                    $pro->pros_display_inprice = $pro->pros_inprice;
                     $pro->pros_display_outprice = $pro->pros_outprice * 1.2285;
                     break;
             }
@@ -85,10 +96,57 @@ class FanganRepository
             if($pro->pros_flag_bili == 2){
                 $pro->pros_display_outprice = $pro->pros_display_inprice * $bili;
             }
-//            if($pro->pros_id == 2){
-//                dd($pro);
-//            }
+            //todo 报价精确到百位
+            $pro->pros_display_inprice = round($pro->pros_display_inprice,-2);
+            $pro->pros_display_outprice = round($pro->pros_display_outprice, -2);
         }
         return $pros;
+    }
+
+    /**
+     * 删除系统/设备，并暴露本方法给控制器
+     * @param $db
+     * @param $id
+     * @return bool|mixed
+     */
+    public function deleteDevices($db, $id)
+    {
+        $whether = $db->where('id',$id)->first();
+        if ($sys = $whether->sys){
+            $re = $this->deleteFatherAndSon($id, $sys);
+        }else{
+            $re = $this->deleteOnlySon($id);
+        }
+        return $re;
+    }
+    /**
+     * 删除系统则删除系统+系统下所有设备
+     * @param $id
+     * @param $sys
+     * @return bool
+     */
+    private function deleteFatherAndSon($id, $sys)
+    {
+        //todo 删除系统
+        DB::table(session('table'))->where('id',$id)->delete();
+        //todo 删除子设备
+        $exist = DB::table(session('table'))->where('father',$sys)->first();
+        //todo 假如子设备是空的
+        $re = true;
+        if($exist){
+            //todo 假如存在子设备
+            $re= DB::table(session('table'))->where('father',$sys)->delete();
+        }
+        return $re;
+    }
+
+    /**
+     * 仅删除子设备
+     * @param $id
+     * @return mixed
+     */
+    private function deleteOnlySon($id){
+        $re = DB::table(session('table'))->where('id',$id)->delete();
+        return $re;
     }
 }

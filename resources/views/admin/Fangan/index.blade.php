@@ -142,7 +142,8 @@
                         order += $(this).attr('id') + ',';
                     })
                     order = order.substring(0,order.length-1);
-
+                    console.log(order)
+//                    return
                     $.post("{{url('admin/fangan/reorder')}}",{order:order,_token:"{{csrf_token()}}"},function (data) {
                         window.location=window.location
                     })
@@ -210,6 +211,9 @@
                 order += $(this).attr('id') + ',';
             })
             order = order.substring(0,order.length-1);
+//            order = order.split(",").reverse().join(",")
+            console.log(order)
+//            return
             $.post("{{url('admin/fangan/reorder')}}",{order:order,_token:"{{csrf_token()}}"},function (data) {
 
             })

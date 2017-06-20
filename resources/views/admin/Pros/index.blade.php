@@ -245,7 +245,6 @@
             },1000,'linear')
             $('#table').fixedHeaderTable()
 
-
             $.post("{{url('admin/prosearch')}}",{sys:sys,name:name,detail:detail,_token:"{{csrf_token()}}"},function (data) {
                 if(data.status==0){
                     var res = data.msg
@@ -262,8 +261,8 @@
                         var number = v.pros_number
                         var unit = v.pros_unit
                         var area = v.pros_area
-                        var inprice = v.pros_inprice
-                        var outprice = v.pros_outpirce
+                        var inprice = v.pros_display_inprice
+                        var outprice = v.pros_display_outprice
 //                        var remark = v.pros_remark
                         var editUrl = "{{url('admin/pros/')}}/"+id+'/edit';
 
@@ -272,6 +271,7 @@
                                 '<td><a href="#">'+sys+'</a></td>' +
                                 '<td><a href="#">'+goodsid+'</a></td>' +
                                 '<td><a href="#">'+name+'</a></td>' +
+                                '<td><a href="#">'+area+'</a></td>' +
                                 '<td><a href="#">'+brand+'</a></td>' +
                                 '<td style="width: 150px;"><a href="#">'+detail+'</a></td>' +
                                 '<td><a href="#">' +
@@ -279,7 +279,6 @@
                                 '</a></td>' +
                                 '<td><a href="#">'+number+'</a></td>' +
                                 '<td><a href="#">'+unit+'</a></td>' +
-                                '<td><a href="#">'+area+'</a></td>' +
                                 '<td><a href="#">' +
                                 '<button class="uk-button uk-button-mini uk-button-primary" onclick="showParams('+id+')">参数表</button>' +
                                 '</a></td>' +

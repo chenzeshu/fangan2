@@ -63,9 +63,7 @@
                         <th></th>
                         <td>
                             <button type="submit" class="uk-button">提交</button>
-                            {{--<input type="submit" value="提交" class="uk-button">--}}
                             <button type="submit" class="uk-button uk-button-primary" onclick="history.go(-1)">返回</button>
-                            {{--<input type="button" class="back uk-button" onclick="history.go(-1)" value="返回">--}}
                         </td>
                     </tr>
                 </tbody>

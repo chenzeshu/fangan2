@@ -2,26 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Model\Params;
 use App\Model\Pros;
 use App\Model\System;
 use App\Model\SystemList;
 use App\Repositories\FanganRepository;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Schema;
+use Mockery\Exception;
 
 class FanganController extends CommonController
 {
     /**
      * 常用:session
-     *    table   string    包括了table_id
-     *    table_id   int    是个人第几张表
+     *    string table       包括了table_id
+     *    int    table_id    是个人第几张表
      *
      *  与系统名的关联键为"id"，未做ORM
      */
@@ -44,29 +38,88 @@ class FanganController extends CommonController
         return view('admin/fangan/index',compact('data','table_name'));
     }
 
-    //添加分系统页面||逻辑
+    /**
+     * >>>新增的主体方法<<<
+     * 添加分系统页面||逻辑
+     * 并更新顺序
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function create()
     {
-       if ($input = Input::except('_token')){
-           $again = DB::table(session('table'))->where('sys',$input['sys'])->first();
-           if ($again){
-               //todo 若分系统不可添加
-               return back()->with('本系统已经存在');
-           }
-           //todo 若分系统可以添加
-           //todo 就将系统名与系统ID添加到个人table里
-           $system = System::where('id',$input['sys'])->first();
-           $input['name'] = $system['name'];
-           DB::table(session('table'))->insert($input);
-           return redirect(url('admin/fangan/index').'/'.session('table_id'));
-       }else{
-           $systemData = System::all();
-           return view('admin/fangan/create',compact('systemData'));
-       }
-
+        if ($input = Input::except('_token')){
+            return $this->addSys($input);
+        }else{
+            return $this->showSysList();
+        }
     }
 
-    /*
+    /**
+     * 添加分系统
+     * @param $input
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    private function addSys($input){
+        //todo 拿到要用的DB实例，因为整体架构老，所以不做DB数组了。
+        $table_DB = DB::table(session('table'));
+        $order_DB = DB::table(session('table').'_order')->where('id', 1);
+        //todo 后台验证是否已存在系统，若分系统可以添加，就将系统名与系统ID添加到个人table里
+        $newId = $this->backendAleadyExistSys($table_DB, $input['sys']);
+        //todo 在顺序表里添加顺序
+        $this->refreshSysOrder($order_DB, $newId);
+
+        return redirect(url('admin/fangan/index').'/'.session('table_id'));
+    }
+    /**
+     * 展示分系统选择页面
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function showSysList(){
+        $systemData = System::all();
+        return view('admin/fangan/create',compact('systemData'));
+    }
+    /**
+     * 为新增分系统主动添加顺序
+     * @param $order_DB
+     * @param $newId
+     */
+    private function refreshSysOrder($order_DB, $newId){
+        $order = $order_DB->first()->order;
+        $order = $order . ',' . $newId;
+        $order_DB->update([
+            'order' => $order
+        ]);
+    }
+
+    /**
+     * 防api提交：在前端检验之后，后端再次检验是否存在本系统
+     * 若不存在，则添加本系统，并返回
+     * @param $table_DB
+     * @param $sys
+     * @return mixed
+     */
+    private function backendAleadyExistSys($table_DB, $sys){
+        $again = $table_DB->where('sys',$sys)->first();
+        if ($again){
+           abort(500); //todo 若分系统不可添加，报500错误
+        }
+        $system = System::where('id',$sys)->first();
+        $newId = $this->ifNotExistSys($table_DB, $system);
+        return $newId;
+    }
+
+    /**
+     * 假如不存在提交的系统，则新增本系统并返回id
+     * @param $table_DB
+     * @param $system
+     * @return mixed
+     */
+    private function ifNotExistSys($table_DB, $system){
+        $input['name'] = $system['name'];
+        $newId = $table_DB->insertGetId($input);
+        return $newId;
+    }
+
+    /**
      * 检查提交分系统时，方案是否已存在本系统。
      * 配合前端AJAX使用
      */
@@ -135,24 +188,14 @@ class FanganController extends CommonController
     //todo 删除系统，则系统下设备全部删除
     public function delete($id)
     {
-        $whether = DB::table(session('table'))->where('id',$id)->first();
-        if ($sys = $whether->sys){
-            //删除系统则删除系统+系统下所有设备
-                 DB::table(session('table'))->where('id',$id)->delete();
-            $re = DB::table(session('table'))->where('father',$sys)->delete();
-        }else{
-            $re = DB::table(session('table'))->where('id',$id)->delete();
-        }
+        $db = DB::table(session('table'));
+
+        $re = $this->repo->deleteDevices($db, $id);
+
         if ($re){
-            $data = [
-                "status"=>0,
-                "msg"=>"删除成功"
-            ];
+            $data = $this->repo->callback_success;
         }else{
-            $data = [
-                "status"=>1,
-                "msg"=>"删除失败"
-            ];
+            $data = $this->repo->callback_error;
         }
         return $data;
     }
@@ -200,14 +243,14 @@ class FanganController extends CommonController
     //接收选择的设备ID并将设备添加到私人空间的方案表中
     public function checkId()
     {
-       $input = Input::except('_token');
-        $sys_name = $input['sys_name'];
+        $input = Input::except('_token');
+//        $sys_name = $input['sys_name'];
         $sys_id = $input['sys_id'];
         $ids = explode(',',$input['ids']);
-
-        //2017.615
+        $_order = [];
+        //2017.0615
         $pros = Pros::find($ids);
-        DB::transaction(function ()use($pros, $ids, $sys_id){
+        DB::transaction(function ()use($pros, $ids, $sys_id, $_order){
             foreach ($pros as $k => $pro) {
                 $array = [
                     'goodsid'=>$pro['pros_goodsid'], 'name'=>$pro['pros_name'],
@@ -225,10 +268,30 @@ class FanganController extends CommonController
                     'img_other'=>$pro['pros_img_other'],
                     'img_other_name'=>$pro['pros_img_other_name']
                 ];
-                DB::table(session('table'))->insert($array);
+                $id = DB::table(session('table'))->insertGetId($array);
+                $_order[] = $id;
             }
-
+            session(['temp_order'=>$_order]);
         });
+        //todo 并主动更新order表
+        $order_DB = DB::table(session('table').'_order')->where('id',1);
+        $newOrder = $this->refreshDevicesOrder($order_DB);
+        $order_DB->update([
+           'order' => $newOrder
+        ]);
         return 'ok';
+    }
+
+    /**
+     * 返回设备新顺序
+     * @param $order_DB
+     * @return array|string
+     */
+    private function refreshDevicesOrder($order_DB){
+        $_order = session('temp_order');
+        $order = explode(',', $order_DB->first()->order);
+        $newOrder = implode(',', array_merge($order, $_order));
+
+        return $newOrder;
     }
 }

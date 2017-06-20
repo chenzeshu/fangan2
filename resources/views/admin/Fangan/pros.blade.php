@@ -48,12 +48,12 @@
                             <th>选择</th>
                             <th>名称</th>
                             <th>物资编码</th>
+                            <th>产地</th>
                             <th>品牌</th>
                             <th>设备型号</th>
                             {{--大图、详细描述--}}
                             <th>图文弹框</th>
                             <th>单位</th>
-                            <th>产地</th>
                             {{--参数表：体积、机柜尺寸、重量、功耗、--}}
                             <th>参数表</th>
                             <th>成本单价（元）</th>
@@ -76,6 +76,9 @@
                                 <a href="#">{{$v->pros_goodsid}}</a>
                             </td>
                             <td>
+                                <a href="#">{{$v->pros_area}}</a>
+                            </td>
+                            <td>
                                 <a href="#">{{$v->pros_brand}}</a>
                             </td>
                             <td>
@@ -84,9 +87,6 @@
                             <td><button class="uk-button uk-button-mini uk-button-primary" onclick="showDesAndImg({{$v->pros_id}})">图文弹框</button></td>
                             <td>
                                 <a href="#">{{$v->pros_unit}}</a>
-                            </td>
-                            <td>
-                                <a href="#">{{$v->pros_area}}</a>
                             </td>
                             <td><button class="uk-button uk-button-mini uk-button-primary" onclick="showParams({{$v->pros_id}})">参数表</button></td>
                             <td>
@@ -217,7 +217,7 @@
                         var unit = v.pros_unit
                         var area = v.pros_area
                         var inprice = v.pros_display_inprice
-                        var outprice = v.pros_display_outpirce
+                        var outprice = v.pros_display_outprice
                         var remark = v.pros_remark
 
                         $('#table').append('<tr>' +
@@ -226,11 +226,11 @@
                                     '<a href="#" class="check-false" onclick="return false">□</a></td>' +
                                 '<td><a href="#">'+name+'</a></td>' +
                                 '<td><a href="#">'+goodsid+'</a></td>' +
+                                '<td><a href="#">'+area+'</a></td>' +
                                 '<td><a href="#">'+brand+'</a></td>' +
                                 '<td><a href="#">'+detail+'</a></td>' +
                                 '<td><a href="#"><button class="uk-button uk-button-mini uk-button-primary" onclick="showDesAndImg('+id+')">图文弹框</button></a></td>' +
                                 '<td><a href="#">'+unit+'</a></td>' +
-                                '<td><a href="#">'+area+'</a></td>' +
                                 '<td><a href="#"><button class="uk-button uk-button-mini uk-button-primary" onclick="showParams('+id+')">参数表</button></a></td>' +
                                 '<td><a href="#">'+inprice+'</a></td>' +
                                 '<td><a href="#">'+outprice+'</a></td>' +

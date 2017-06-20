@@ -36,9 +36,10 @@ class ProsController extends Controller
         return view('admin/pros/index',compact('data', 'systemList'));
     }
 
-    //get  admin/reward/create  添加商品
+    //get  admin/pros/create  添加商品
     public function create()
     {
+        //拿到系统list
         $systemList = SystemList::all();
         return view('admin.pros.create',compact('systemList'));
     }
@@ -62,7 +63,7 @@ class ProsController extends Controller
 
         if($validator->passes()){
 
-            //todo 按币种转换成本为人民币
+            //todo 按币种转换成本为人民币并存储
             $params = Params::first();
             $dollar = $params['pa_dollar'];
             $eu = $params['pa_eu'];
@@ -99,10 +100,23 @@ class ProsController extends Controller
         $field->pros_img_other = explode(',',$field->pros_img_other);
         return view('admin/pros/edit',compact('field','systemList'));
     }
-    //put|patch admin/reward/{reward}  更新分类 {reward}是传参的参数值
+    //put|patch admin/pros/{pros_id}  更新分类 {reward}是传参的参数值
     public function update($pros_id)
     {
         $input = Input::except('_token','_method');
+
+        //todo 按币种转换成本为人民币并存储
+        $params = Params::first();
+        $dollar = $params['pa_dollar'];
+        $eu = $params['pa_eu'];
+        $bili = $params['pa_bili'];
+        //todo 返回各种币种换算后的人民币价格
+        $input['pros_display_inprice'] = $this->repo
+            ->judgeInprice($input['pros_flag_money'], $input['pros_inprice'], $dollar, $eu);
+
+        //todo 是否转换为有比例报价
+        $input['pros_display_outprice'] = $this->repo
+            ->judgeOutprice($input['pros_flag_bili'], $input['pros_outprice'],$input['pros_display_inprice'], $bili);
 
         $re = Pros::where('pros_id',$pros_id)->update($input);
 
