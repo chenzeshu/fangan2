@@ -63,7 +63,7 @@ class FanganController extends CommonController
         $table_DB = DB::table(session('table'));
         $order_DB = DB::table(session('table').'_order')->where('id', 1);
         //todo 后台验证是否已存在系统，若分系统可以添加，就将系统名与系统ID添加到个人table里
-        $newId = $this->backendAleadyExistSys($table_DB, $input['sys']);
+        $newId = $this->backendAleadyExistSys($table_DB, $input);
         //todo 在顺序表里添加顺序
         $this->refreshSysOrder($order_DB, $newId);
 
@@ -84,36 +84,54 @@ class FanganController extends CommonController
      */
     private function refreshSysOrder($order_DB, $newId){
         $order = $order_DB->first()->order;
-        $order = $order . ',' . $newId;
+        if($order){
+            $order = $order . ',' . $newId;
+        }
+        else{
+            $order = $newId;  //如果原先$order是空的，也就是第一条数据，避免出现`, foo`这样尴尬的数据
+        }
         $order_DB->update([
             'order' => $order
         ]);
     }
 
     /**
+     * 返回设备新顺序
+     * @param $order_DB
+     * @return array|string
+     */
+    private function refreshDevicesOrder($order_DB){
+        $_order = session('temp_order');
+        $order = explode(',', $order_DB->first()->order);
+        $newOrder = implode(',', array_merge($order, $_order));
+
+        return $newOrder;
+    }
+
+    /**
      * 防api提交：在前端检验之后，后端再次检验是否存在本系统
      * 若不存在，则添加本系统，并返回
      * @param $table_DB
-     * @param $sys
+     * @param $input
      * @return mixed
      */
-    private function backendAleadyExistSys($table_DB, $sys){
-        $again = $table_DB->where('sys',$sys)->first();
+    private function backendAleadyExistSys($table_DB, $input){
+        $again = $table_DB->where('sys',$input['sys'])->first();
         if ($again){
            abort(500); //todo 若分系统不可添加，报500错误
         }
-        $system = System::where('id',$sys)->first();
-        $newId = $this->ifNotExistSys($table_DB, $system);
+        $system = System::where('id',$input['sys'])->first();
+        $newId = $this->ifNotExistSys($table_DB, $system, $input);
         return $newId;
     }
 
     /**
      * 假如不存在提交的系统，则新增本系统并返回id
      * @param $table_DB
-     * @param $system
+     * @param $system  该分系统的数据
      * @return mixed
      */
-    private function ifNotExistSys($table_DB, $system){
+    private function ifNotExistSys($table_DB, $system, $input){
         $input['name'] = $system['name'];
         $newId = $table_DB->insertGetId($input);
         return $newId;
@@ -282,16 +300,5 @@ class FanganController extends CommonController
         return 'ok';
     }
 
-    /**
-     * 返回设备新顺序
-     * @param $order_DB
-     * @return array|string
-     */
-    private function refreshDevicesOrder($order_DB){
-        $_order = session('temp_order');
-        $order = explode(',', $order_DB->first()->order);
-        $newOrder = implode(',', array_merge($order, $_order));
 
-        return $newOrder;
-    }
 }
